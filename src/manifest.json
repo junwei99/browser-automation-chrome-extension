@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "H5 Chrome",
+  "description": "Chrome extension to store H5 browser automation tasks",
+  "version": "0.0.1",
+  "action": {
+    "default_popup": "index.html"
+  },
+  "permissions": ["scripting", "activeTab"]
+}

@@ -1,0 +1,105 @@
+[
+  {
+    "groupName": "Storage",
+    "groupList": [
+      {
+        "path": "/clear-session-storage.js",
+        "name": "clear session storage"
+      },
+      {
+        "path": "/switch-env.js",
+        "name": "Switch env"
+      },
+      {
+        "path": "/get-session-info.js",
+        "name": "Get login session data"
+      },
+      {
+        "path": "/set-session-info.js",
+        "name": "Set login session data"
+      },
+      {
+        "path": "/grayscale-read.js",
+        "name": "Grayscale read"
+      },
+      {
+        "path": "/grayscale-set.js",
+        "name": "Grayscale set"
+      },
+      {
+        "path": "/grayscale-search.js",
+        "name": "Grayscale search"
+      }
+    ]
+  },
+  {
+    "groupName": "Automation",
+    "groupList": [
+      {
+        "path": "/auto-fill-authorize-login.js",
+        "name": "Auto fill authorize login"
+      }
+    ]
+  },
+  {
+    "groupName": "URL",
+    "groupList": [
+      {
+        "path": "/reload-error-page.js",
+        "name": "Reload error"
+      },
+      {
+        "path": "/replace-search-params.js",
+        "name": "Replace search params"
+      }
+    ]
+  },
+  {
+    "groupName": "Mock",
+    "groupList": [
+      {
+        "path": "/mock-risk.js",
+        "name": "Mock risk SDK"
+      },
+      {
+        "path": "/load-script.js",
+        "name": "Load Script"
+      }
+    ]
+  },
+  {
+    "groupName": "Firebase",
+    "groupList": [
+      {
+        "path": "/firebase-find-tester.js",
+        "name": "Firebase find tester"
+      },
+      {
+        "path": "/firebase-find-all-testers.js",
+        "name": "Firebase find all testers"
+      }
+    ]
+  },
+  {
+    "groupName": "Mini Program",
+    "groupList": [
+      {
+        "path": "/topup.js",
+        "name": "Topup"
+      },
+      {
+        "path": "/mp-console-release.js",
+        "name": "MPC release"
+      }
+    ]
+  },
+  {
+    "groupName": "Tools",
+    "groupList": [
+      {
+        "path": "/amcs-fillin-map.js",
+        "name": "AMCS fillin map"
+      }
+    ]
+  }
+]
