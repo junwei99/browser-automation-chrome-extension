@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "H5 Chrome",
+  "name": "Browser Automation Extension",
   "description": "Chrome extension to store H5 browser automation tasks",
   "version": "0.0.1",
   "action": {
