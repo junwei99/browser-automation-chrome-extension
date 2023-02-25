@@ -33,19 +33,22 @@ const App = () => {
   const [devModeState, dispatchDevMode] = useReducer(devModeReducer, {
     isDevMode: false,
     inputDisabled: true,
-    //iniital value but can be resetted
-    endpoint: defaultDomain + "/config.json",
+    endpoint: defaultDomain,
   });
 
-  const getScript = async (path: string) => {
-    const res = await fetch(localhostDomain + path);
+  const getScript = async (isDevMode: boolean, path: string) => {
+    let fetchUrl = localhostDomain;
+
+    if (isDevMode) {
+      fetchUrl = devModeState.endpoint;
+    }
+
+    const res = await fetch(fetchUrl + path);
     return await res.text();
   };
 
   const itemOnClick = async (path: string) => {
-    const scriptToInject = await getScript(path);
-
-    console.log({ scriptToInject });
+    const scriptToInject = await getScript(devModeState.isDevMode, path);
 
     const [tab] = await chrome.tabs.query({
       currentWindow: true,
@@ -115,11 +118,11 @@ const App = () => {
 
     if (devModeState.isDevMode) {
       getConfig(true);
-      initialLoaded.current = true;
     } else if (!devModeState.isDevMode) {
       getConfig(false);
-      initialLoaded.current = true;
     }
+
+    initialLoaded.current = true;
   }, [devModeState.isDevMode]);
 
   return (
