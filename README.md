@@ -2,9 +2,13 @@
 
 Chrome extension to inject scripts from local or through an api to the current tab on Chrome browser
 
+## How is this useful?
+
+This Chrome extension is useful for automation use cases, suitable for developers and non developers.
+
 ## How to use
 
-1. write an IIFE ([what is this?](https://developer.mozilla.org/en-US/docs/Glossary/IIFE)) in the src/assets/scripts directory
+1. write an IIFE script ([what is this?](https://developer.mozilla.org/en-US/docs/Glossary/IIFE)) in the src/assets/scripts directory
 2. write config.json to specify the path of the automation script and the name of the automation script
 3. Build the extension to use it in Chrome
 
