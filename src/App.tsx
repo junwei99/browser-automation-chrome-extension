@@ -1,39 +1,61 @@
-import { useEffect, useState, useReducer, useRef } from "react";
+import { useEffect, useState, useRef, useReducer } from "react";
 import "./App.css";
 import Section from "./components/Section";
 import ConfigJSON from "./assets/scripts/config.json";
+import Checkbox from "./components/Checkbox";
+import Input from "./components/Input";
+import { debounce } from "./utils/debounce";
 
 type TOperations = {
   groupName: string;
   groupList: Array<{ path: string; name: string }>;
 };
 
-type TDevMode = {
+type TDevModeState = {
   isDevMode: boolean;
   inputDisabled: boolean;
   endpoint: string;
 };
 
 const App = () => {
-  const defaultDomain = "http://127.0.0.1:5500/bookmarklet";
+  console.log({ storage: chrome.storage });
+  // const defaultDomain = "http://127.0.0.1:5500/bookmarklet";
   const localhostDomain = `${location.origin}/scripts`;
 
   const [operationsList, setOperationsList] = useState<Array<TOperations>>([]);
   const [operationListIsLoading, setOperationsListIsLoading] = useState(false);
 
-  const devModeReducer = (state: TDevMode, action: { type: string }) => {
-    if (action.type === "on") {
-      return { ...state, isDevMode: true, inputDisabled: false };
-    } else if (action.type === "off") {
-      return { ...state, isDevMode: false, inputDisabled: true };
+  const devModeReducer = (
+    state: TDevModeState,
+    action: {
+      type: string;
+      value?: Partial<Omit<TDevModeState, "inputDisabled">>;
     }
-    throw new Error("Invalid action type");
+  ): TDevModeState => {
+    switch (action.type) {
+      case "init":
+        if (!action?.value) throw new Error("No value provided for endpoint");
+        return {
+          endpoint: action.value?.endpoint ?? "",
+          isDevMode: action.value?.isDevMode ?? false,
+          inputDisabled: !action.value?.isDevMode,
+        };
+      case "on":
+        return { ...state, isDevMode: true, inputDisabled: false };
+      case "off":
+        return { ...state, isDevMode: false, inputDisabled: true };
+      case "set endpoint":
+        if (!action?.value) throw new Error("No value provided for endpoint");
+        return { ...state, endpoint: action.value?.endpoint ?? "" };
+      default:
+        throw new Error("Invalid action type");
+    }
   };
 
-  const [devModeState, dispatchDevMode] = useReducer(devModeReducer, {
+  const [devModeState, dispatchDevModeState] = useReducer(devModeReducer, {
     isDevMode: false,
     inputDisabled: true,
-    endpoint: defaultDomain,
+    endpoint: "",
   });
 
   const getScript = async (isDevMode: boolean, path: string) => {
@@ -69,9 +91,10 @@ const App = () => {
     });
   };
 
-  const fetchConfigList = () => {
+  const fetchConfigList = (endpoint: string) => {
+    console.log("fetching", endpoint);
     setOperationsListIsLoading(true);
-    fetch(defaultDomain + "/config.json", {
+    fetch(endpoint + "/config.json", {
       method: "GET",
       headers: {
         Accept: "application/json",
@@ -89,9 +112,9 @@ const App = () => {
       });
   };
 
-  const getConfig = (isDevMode: boolean) => {
-    if (isDevMode) {
-      fetchConfigList();
+  const getConfig = (isDevMode: boolean, endpoint?: string) => {
+    if (isDevMode && endpoint) {
+      fetchConfigList(endpoint);
     } else {
       setOperationsList(ConfigJSON);
     }
@@ -101,16 +124,22 @@ const App = () => {
     const toSetForDev = !devModeState.isDevMode;
 
     if (toSetForDev) {
-      getConfig(true);
-      dispatchDevMode({ type: "on" });
+      getConfig(true, devModeState.endpoint);
+      dispatchDevModeState({ type: "on" });
     } else {
       getConfig(false);
-      dispatchDevMode({ type: "off" });
+      dispatchDevModeState({ type: "off" });
     }
+  };
+
+  const endpointOnChange = (endpoint: string) => {
+    dispatchDevModeState({ type: "set endpoint", value: { endpoint } });
+    debounce(() => fetchConfigList(endpoint))();
   };
 
   const initialLoaded = useRef(false);
 
+  //fix first load problem
   useEffect(() => {
     if (initialLoaded.current) {
       return;
@@ -120,6 +149,25 @@ const App = () => {
 
     initialLoaded.current = true;
   }, [devModeState.isDevMode]);
+
+  useEffect(() => {
+    chrome.storage.sync.get(["devModeState"], (result) => {
+      console.log({ result });
+      if (result?.devModeState) {
+        dispatchDevModeState({ type: "init", value: result.devModeState });
+      }
+    });
+  }, []);
+
+  const skipRef = useRef(true);
+
+  useEffect(() => {
+    if (!skipRef.current) {
+      chrome.storage.sync.set({ devModeState: devModeState });
+    }
+
+    skipRef.current = false;
+  }, [devModeState]);
 
   return (
     <div className="App">
@@ -152,22 +200,16 @@ const App = () => {
       <div className="flex flex-col gap-5">
         <Section text="Dev mode">
           <div className="flex justify-start">
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                onChange={() => toggleDevMode()}
-                className="sr-only peer"
-              />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-            </label>
+            <Checkbox
+              onChange={() => toggleDevMode()}
+              checked={devModeState.isDevMode}
+            />
           </div>
         </Section>
         <Section text="Endpoint URL">
-          <input
-            type="text"
-            id="first_name"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          <Input
             placeholder="Enter endpoint URL"
+            onChange={(e) => endpointOnChange(e.target.value)}
             value={devModeState.endpoint}
             disabled={devModeState.inputDisabled}
           />
