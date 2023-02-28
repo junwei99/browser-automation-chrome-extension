@@ -13,3 +13,7 @@ Chrome extension to inject scripts, primarily meant for developers to automate t
 1. run `npm run build-extension`
 2. Go to `chrome://extensions/` and tick developer mode on
 3. Click on "Load unpacked" and select the "dist" folder that is generated after the build process
+
+## Example image of this chrome extension
+
+<img width="321" alt="image" src="https://user-images.githubusercontent.com/45056907/221852604-ccf56883-6895-4197-829b-e26fb8c60ee9.png">
