@@ -1,6 +1,6 @@
 # Browser Automation Chrome Extension
 
-Chrome extension to inject scripts, primarily meant for developers to use to automate their daily browser tasks.
+Chrome extension to inject scripts, primarily meant for developers to automate their daily browser tasks.
 
 ## How to use
 
