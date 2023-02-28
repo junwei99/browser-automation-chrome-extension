@@ -2,10 +2,6 @@
 
 Chrome extension to inject scripts, primarily meant for developers to use to automate their daily browser tasks.
 
-## How is this useful?
-
-This Chrome extension is useful for automation use cases, suitable for developers and non developers.
-
 ## How to use
 
 1. write an IIFE script ([what is this?](https://developer.mozilla.org/en-US/docs/Glossary/IIFE)) in the src/public/scripts directory
