@@ -69,6 +69,16 @@ const App = () => {
           ))}
         {operationsList?.length <= 0 && <p>No config.json file found</p>}
       </div>
+      <div className="text-sm mt-[10rem]">
+        built by{" "}
+        <a
+          className="text-blue-400"
+          target="_blank"
+          href="https://github.com/junwei99"
+        >
+          junwei
+        </a>{" "}
+      </div>
     </div>
   );
 };
